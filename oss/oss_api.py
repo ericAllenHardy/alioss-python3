@@ -532,6 +532,39 @@ class OssAPI:
         fp.close()
         return res
 
+    def put_object_from_bytes(self, bucket, object, input_content,
+                              content_type=DefaultContentType, headers=None,
+                              params=None):
+        '''
+        Put object into bucket, the content of object is from input_content
+
+        :type bucket: string
+        :param
+
+        :type object: string
+        :param
+
+        :type input_content: bytes
+        :param
+
+        :type content_type: string
+        :param: the object content type that supported by HTTP
+
+        :type headers: dict
+        :param: HTTP header
+
+        Returns:
+            HTTP Response
+        '''
+        if not headers:
+            headers = {}
+        headers['Content-Type'] = content_type
+        headers['Content-Length'] = str(len(input_content))
+        fp = io.BytesIO(input_content)
+        res = self.put_object_from_fp(bucket, object, fp, content_type, headers, params)
+        fp.close()
+        return res
+
     def _open_conn_to_put_object(self, bucket, object, filesize, content_type=DefaultContentType, headers=None, params=None):
         '''
         NOT public API
