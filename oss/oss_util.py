@@ -28,36 +28,7 @@ if "AWS" == PROVIDER:
     SELF_DEFINE_HEADER_PREFIX = "x-amz-"
 
 def getlogger(debug=DEBUG, log_level=LOG_LEVEL, log_name="log.txt"):
-    if not debug:
-        logger = logging.getLogger('oss')
-        logger.addHandler(EmptyHandler())
-        return logger
-    logfile = os.path.join(os.getcwd(), log_name)
-    max_log_size = 100*1024*1024 #Bytes
-    backup_count = 5
-    format = \
-    "%(asctime)s %(levelname)-8s[%(filename)s:%(lineno)d(%(funcName)s)] %(message)s"
-    hdlr = RotatingFileHandler(logfile,
-                                  mode='a',
-                                  maxBytes=max_log_size,
-                                  backupCount=backup_count)
-    formatter = logging.Formatter(format)
-    hdlr.setFormatter(formatter)
-    logger = logging.getLogger("oss")
-    logger.addHandler(hdlr)
-    if "DEBUG" == log_level.upper():
-        logger.setLevel(logging.DEBUG)
-    elif "INFO" == log_level.upper():
-        logger.setLevel(logging.INFO)
-    elif "WARNING" == log_level.upper():
-        logger.setLevel(logging.WARNING)
-    elif "ERROR" == log_level.upper():
-        logger.setLevel(logging.ERROR)
-    elif "CRITICAL" == log_level.upper():
-        logger.setLevel(logging.CRITICAL)
-    else:
-        logger.setLevel(logging.ERROR)
-    return logger
+    return logging.getLogger('oss')
 
 class EmptyHandler(logging.Handler):
     pass
