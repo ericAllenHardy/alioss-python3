@@ -63,8 +63,8 @@ class OssAPI:
 
     def set_debug(self, is_debug):
         if is_debug:
-            self.debug = True 
-        
+            self.debug = True
+
     def set_retry_times(self, retry_times=5):
         self.retry_times = retry_times
 
@@ -79,7 +79,7 @@ class OssAPI:
             self.RecvBufferSize = (int)(buf_size)
         except ValueError:
             pass
-    
+
     def get_connection(self, tmp_host=None):
         host = ''
         port = 80
@@ -260,7 +260,7 @@ class OssAPI:
             else:
                 return res
         return res
-        
+
     def http_request_with_redirect(self, method, bucket, object, headers=None, body='', params=None):
         '''
         Send http request of operation
@@ -305,7 +305,7 @@ class OssAPI:
         date = time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime())
         headers['Date'] = date
         headers['Authorization'] = self._create_sign_for_normal_auth(method, headers, resource)
-        headers['User-Agent'] = self.agent 
+        headers['User-Agent'] = self.agent
         if check_bucket_valid(bucket) and not is_ip(self.host):
             conn = self.get_connection(headers['Host'])
         else:
@@ -324,7 +324,7 @@ class OssAPI:
         List all buckets of user
         type headers: dict
         :param
-        
+
         Returns:
             HTTP Response
         '''
@@ -622,7 +622,7 @@ class OssAPI:
         headers["Content-Length"] = filesize
         headers["Date"] = date
         headers["Expect"] = "100-Continue"
-        headers['User-Agent'] = self.agent 
+        headers['User-Agent'] = self.agent
         for k in headers.keys():
             conn.putheader(str(k), str(headers[k]))
         if '' != self.secret_access_key and '' != self.access_id:
@@ -767,18 +767,17 @@ class OssAPI:
             header = {}
             header = convert_header2map(res.getheaders())
             filesize = safe_get_element("content-length", header)
-            f = file(filename, 'wb')
-            data = ''
-            while True:
-                data = res.read(self.RecvBufferSize)
-                if data:
-                    f.write(data)
-                    totalread += len(data)
-                    if self.show_bar:
-                        self.view_bar(totalread, filesize)
-                else:
-                    break
-            f.close()
+            with open(filename, 'wb') as f:
+                data = ''
+                while True:
+                    data = res.read(self.RecvBufferSize)
+                    if data:
+                        f.write(data)
+                        totalread += len(data)
+                        if self.show_bar:
+                            self.view_bar(totalread, filesize)
+                    else:
+                        break
         # TODO: get object with flow
         return res
 
@@ -979,10 +978,10 @@ class OssAPI:
 
         :type max_part_num: int
         :param
-        
+
         :type headers: dict
         :param
-        
+
         Returns:
             HTTP Response
 
@@ -1087,19 +1086,19 @@ class OssAPI:
         List all upload parts of given upload_id
         :type bucket: string
         :param
-        
+
         :type object: string
         :param
-        
+
         :type upload_id: string
         :param
-       
+
         :type max_parts: int
-        :param 
+        :param
 
         :type part_number_marker: string
         :param
-        
+
         Returns:
             HTTP Response
         '''
@@ -1161,7 +1160,7 @@ class OssAPI:
     def upload_part(self, bucket, object, filename, upload_id, part_number, headers=None, params=None):
         '''
         Upload the content of filename as one part of given upload_id
-        
+
         :type bucket: string
         :param
 
@@ -1174,7 +1173,7 @@ class OssAPI:
         :type upload_id: string
         :param
 
-        :type part_number: int 
+        :type part_number: int
         :param
 
         :type headers: dict
@@ -1196,7 +1195,7 @@ class OssAPI:
     def upload_part_from_string(self, bucket, object, data, upload_id, part_number, headers=None, params=None):
         '''
         Upload the content of string as one part of given upload_id
-        
+
         :type bucket: string
         :param
 
@@ -1209,7 +1208,7 @@ class OssAPI:
         :type upload_id: string
         :param
 
-        :type part_number: int 
+        :type part_number: int
         :param
 
         :type headers: dict
@@ -1238,7 +1237,7 @@ class OssAPI:
 
         :type object: string
         :param
-        
+
         :type upload_id: string
         :param
 
@@ -1310,7 +1309,7 @@ class OssAPI:
 
         :type upload_id: string
         :param
-    
+
         :type thread_num: int
         :param
 
@@ -1343,7 +1342,7 @@ class OssAPI:
         part_msg_list = split_large_file(filename, object, max_part_num)
         logger = getlogger(self.debug)
         logger.info("bucket:%s, object:%s, upload_id is: %s, split_number:%d" % (bucket, object, upload_id, len(part_msg_list)))
-        
+
         #make sure all the parts are put into same bucket
         if len(part_msg_list) < thread_num and len(part_msg_list) != 0:
             thread_num = len(part_msg_list)
@@ -1484,7 +1483,7 @@ class OssAPI:
         return False
 
     def get_object_info(self, bucket, object, headers=None, params=None):
-        ''' 
+        '''
         Get object information
         :type bucket: string
         :param:
